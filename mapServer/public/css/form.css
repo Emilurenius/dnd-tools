@@ -1,0 +1,22 @@
+.standardForm {
+    display: grid;
+}
+
+.standardForm input {
+    font-size: 30px;
+    margin: 20px;
+}
+
+@media (max-width: 425px) {
+    .standardForm {
+        display: block;
+    }
+    .standardForm input {
+        font-size: 15px;
+        margin: 10px;
+    }
+
+    .standardForm .button {
+        font-size: 25px;
+    }
+}
