@@ -4,7 +4,7 @@
   "description": "A server for displaying a D&D map to several people over the internet",
   "main": "app.js",
   "scripts": {
-    "test": "node app.js 80"
+    "test": "nodemon app.js 80"
   },
   "repository": {
     "type": "git",
@@ -17,9 +17,14 @@
   },
   "homepage": "https://github.com/Emilurenius/dnd-tools#readme",
   "dependencies": {
+    "bcrypt": "^5.0.0",
     "cors": "^2.8.5",
+    "ejs": "^3.1.5",
     "express": "^4.17.1",
     "fs": "0.0.1-security",
     "path": "^0.12.7"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.6"
   }
 }

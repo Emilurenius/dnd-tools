@@ -1,4 +1,4 @@
-const address = window.location.href
+const address = `${window.location.origin}${window.location.pathname}`
 const form = document.getElementById("createCampaignForm")
 
 console.log(address)
@@ -22,6 +22,9 @@ form.addEventListener("submit", (event) => {
         alert("Both password fields must be identical!")
     }
     else {
-        console.log("Form submitted")
+        console.log(form.password.value)
+        let tempForm = $(`<form action="/dm/campaign/login" method="post" style="display: none;"> <input type="text" name="mode" value="register"> <input type="text" name="campaignName" value="${form.campaignName.value}"> <input type="text" name="password" value="${form.password.value}"> </form>`);
+        $('body').append(tempForm);
+        tempForm.submit();
     }
 })
