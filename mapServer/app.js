@@ -23,6 +23,22 @@ function saveJSON(filename, dict) {
         }
     })
 }
+
+function loadJSON(filename, sync=false) {
+    if (sync == true) {
+        let rawdata = fs.readFileSync(filename)
+        return JSON.parse(rawdata)
+    } else {
+        fs.readFile(filename, (err, data) => {
+            if (err) throw err
+            return JSON.parse(data)
+        })
+    }
+}
+
+function randInt(min,max){
+    return Math.floor(Math.random()*(max-min+1)+min);
+}
 // functions end
 
 app.use(cors()) // Making sure the browser can request more data after it is loaded on the client computer.
@@ -46,7 +62,7 @@ app.get("/dm", (req, res) => {
         }
         else if (req.query.mode == "loadCampaign") {
             console.log("\nLoad campaign dialouge initiated:")
-            res.send("Load campaign page")
+            res.sendFile(path.join(__dirname, "/html/campaignPage.html"))
         }
     }
     else {
@@ -58,13 +74,18 @@ app.get("/dm", (req, res) => {
 app.post("/dm/campaign/login", async (req, res) => {
 
     if (req.body.mode == "register") {
-        const campaignName = req.body.campaignName
-        const password = req.body.password
-        const hashedPass = await bcrypt.hash(req.body.password, 10)
+        console.log("/nCampaign creator started:")
+        const campaignName = req.body
+        const password = req.body.password.value
+        const hashedPass = await bcrypt.hash(password, 10)
         
         const campaignJSON = {
             "name": campaignName,
             "password": hashedPass,
+            "token": {
+                "val": null,
+                "created": null
+            },
             "maps": {},
             "lore": {}
         }
@@ -79,8 +100,28 @@ app.post("/dm/campaign/login", async (req, res) => {
             }
         })
     }
+    else if (req.body.mode == "login") {
+        const campaignName = req.body.campaignName
+        const password = req.body.password
+
+        const campaignData = loadJSON(path.join(__dirname, `campaigns/${campaignName}/campaignData.json`), sync=true)
+        const isEqual = await bcrypt.compare(password, campaignData.password)
+        if (isEqual) {
+            const token = randInt(1111111111, 9999999999)
+            campaignData.token.val = token
+            saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignData)
+
+            res.send({"val": `${token}`})
+            console.log("Token transferred")
+        }
+        else {
+            res.send({"val": false})
+            console.log("Wrong password given")
+        }
+    }
     else{
-        res.send(`${req.query.mode} is not a valid mode`)
+        console.log(`\nInvalid mode given to /dm/campaign/login: ${req.body.mode}`)
+        res.send(`${req.body.mode} is not a valid mode`)
     }
 })
 
