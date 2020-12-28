@@ -5,6 +5,7 @@ const path = require("path")
 const app = express()
 const fs = require("fs")
 const bcrypt = require("bcrypt")
+const cookieParser = require("cookie-parser")
 //Setup end
 
 // Reading input from terminal start
@@ -44,6 +45,7 @@ function randInt(min,max){
 app.use(cors()) // Making sure the browser can request more data after it is loaded on the client computer.
 app.set("view engine", "ejs")
 app.use(express.urlencoded({extended:false}))
+app.use(cookieParser())
 
 app.use("/static", express.static("public"))
 
@@ -62,7 +64,7 @@ app.get("/dm", (req, res) => {
         }
         else if (req.query.mode == "loadCampaign") {
             console.log("\nLoad campaign dialouge initiated:")
-            res.sendFile(path.join(__dirname, "/html/campaignPage.html"))
+            res.sendFile(path.join(__dirname, "/html/campaignLogin.html"))
         }
     }
     else {
@@ -71,12 +73,23 @@ app.get("/dm", (req, res) => {
     }
 })
 
+app.get("/dm/campaign", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
+    
+    if (campaignData.token.val == req.cookies.token) {
+        res.sendFile(path.join(__dirname, "/html/dmCampaign.html"))
+    }
+    else {
+        res.redirect("/dm?mode=loadCampaign")
+    }
+})
+
 app.post("/dm/campaign/login", async (req, res) => {
 
     if (req.body.mode == "register") {
-        console.log("/nCampaign creator started:")
-        const campaignName = req.body
-        const password = req.body.password.value
+        console.log("\nCampaign creator started:")
+        const campaignName = req.body.campaignName
+        const password = req.body.password
         const hashedPass = await bcrypt.hash(password, 10)
         
         const campaignJSON = {
@@ -109,6 +122,7 @@ app.post("/dm/campaign/login", async (req, res) => {
         if (isEqual) {
             const token = randInt(1111111111, 9999999999)
             campaignData.token.val = token
+            campaignData.token.created = Date.now()
             saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignData)
 
             res.send({"val": `${token}`})
@@ -122,16 +136,6 @@ app.post("/dm/campaign/login", async (req, res) => {
     else{
         console.log(`\nInvalid mode given to /dm/campaign/login: ${req.body.mode}`)
         res.send(`${req.body.mode} is not a valid mode`)
-    }
-})
-
-app.post("/comparePass", async (req, res) => { // Just for reference. Will be removed soon
-    const isEqual = await bcrypt.compare(req.body.pass, hashedPass)
-    if (isEqual) {
-        res.send("Logged in!")
-    }
-    else {
-        res.send("Wrong password!")
     }
 })
 
