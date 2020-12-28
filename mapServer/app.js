@@ -84,6 +84,17 @@ app.get("/dm/campaign", (req, res) => {
     }
 })
 
+app.get("/dm/campaign/json", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.token.val == req.cookies.token) {
+        res.send(campaignData)
+    }
+    else {
+        res.send({"verified": false})
+    }
+})
+
 app.post("/dm/campaign/login", async (req, res) => {
 
     if (req.body.mode == "register") {
@@ -114,6 +125,7 @@ app.post("/dm/campaign/login", async (req, res) => {
         })
     }
     else if (req.body.mode == "login") {
+        console.log("\nLogin initiated:")
         const campaignName = req.body.campaignName
         const password = req.body.password
 
