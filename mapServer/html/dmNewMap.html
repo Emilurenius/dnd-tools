@@ -5,19 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="/static/css/main.css"/>
+    <link rel="stylesheet" href="/static/css/form.css"/>
     <title>Main page</title>
 </head>
 <body>
 
     <div class="Content">
-        <a href="" id="addMapButton" class="button">Add map</a>
-    </div>
-
-    <div class="Content" id="maps">
-        
+        <p class="Main-Text">Upload map:</p>
+        <form class="standardForm Content-box" id="newMap">
+            <input type="text" placeholder="Map name" name="mapName">
+            <input type="file" name="image">
+        </form>
     </div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="module" src="/static/javascript/dmCampaign.js"></script>
+    <script src="/static/javascript/dmNewMap_form.js"></script>
 </body>
 </html>

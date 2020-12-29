@@ -87,11 +87,27 @@ app.get("/dm/campaign", (req, res) => {
 app.get("/dm/campaign/json", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
-    if (campaignData.token.val == req.cookies.token) {
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
         res.send(campaignData)
     }
     else {
         res.send({"verified": false})
+    }
+})
+
+app.get("/dm/campaign/add", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        if (req.query.add == "map") {
+            console.log("\nAdd map page loaded:")
+            const campaign = req.query.campaign
+            console.log(`Campaign selected: ${campaign}`)
+            res.sendFile(path.join(__dirname, "/html/dmNewMap.html"))
+        }
+    }
+    else {
+        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
     }
 })
 
