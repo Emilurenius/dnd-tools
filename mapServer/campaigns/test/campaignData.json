@@ -1,9 +1,9 @@
 {
     "name": "test",
-    "password": "$2b$10$.m3BRHwrN5cSgPqRtFiWUO1/2ClhHwcQ6sMQSB1zP3MwFDfmVojPi",
+    "password": "$2b$10$xmuCgDeq/qNhslwjduIKzu4Px.iaovs/G0.XAkBr5i5QfNx2I2Leq",
     "token": {
-        "val": 2267828728,
-        "created": 1609184544352
+        "val": 2000563001,
+        "created": 1609276255859
     },
     "maps": {},
     "lore": {}

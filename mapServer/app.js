@@ -76,11 +76,11 @@ app.get("/dm", (req, res) => {
 app.get("/dm/campaign", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
     
-    if (campaignData.token.val == req.cookies.token) {
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
         res.sendFile(path.join(__dirname, "/html/dmCampaign.html"))
     }
     else {
-        res.redirect("/dm?mode=loadCampaign")
+        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
     }
 })
 
@@ -116,11 +116,11 @@ app.post("/dm/campaign/login", async (req, res) => {
 
         fs.mkdir(path.join(__dirname, `/campaigns/${campaignName}`), (err) => {
             if (err) {
-                res.send("ERR: Directory could not be created. The name of the campaign might already be taken.")
+                res.send({"val": "unavailable"})
             }
             else {
                 saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignJSON)
-                res.send("Campaign created!")
+                res.send({"val": "success"})
             }
         })
     }
