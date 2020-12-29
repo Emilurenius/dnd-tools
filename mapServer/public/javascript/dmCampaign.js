@@ -18,4 +18,5 @@ console.log(window.location.search)
 
 const campaign = window.location.search.split("&")[0].split("=")[1]
 
-campaignData = getJson(`${address}/dm/campaign/json`)
+const campaignData = getJSON(`${address}/dm/campaign/json?campaign=${campaign}`)
+console.log(campaignData)

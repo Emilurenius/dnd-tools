@@ -129,20 +129,25 @@ app.post("/dm/campaign/login", async (req, res) => {
         const campaignName = req.body.campaignName
         const password = req.body.password
 
-        const campaignData = loadJSON(path.join(__dirname, `campaigns/${campaignName}/campaignData.json`), sync=true)
-        const isEqual = await bcrypt.compare(password, campaignData.password)
-        if (isEqual) {
-            const token = randInt(1111111111, 9999999999)
-            campaignData.token.val = token
-            campaignData.token.created = Date.now()
-            saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignData)
+        if (fs.existsSync(path.join(__dirname, `campaigns/${campaignName}`))) {
+            const campaignData = loadJSON(path.join(__dirname, `campaigns/${campaignName}/campaignData.json`), sync=true)
+            const isEqual = await bcrypt.compare(password, campaignData.password)
+            if (isEqual) {
+                const token = randInt(1111111111, 9999999999)
+                campaignData.token.val = token
+                campaignData.token.created = Date.now()
+                saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignData)
 
-            res.send({"val": `${token}`})
-            console.log("Token transferred")
+                res.send({"val": `${token}`})
+                console.log("Token transferred")
+            }
+            else {
+                res.send({"val": false})
+                console.log("Wrong password given")
+            }
         }
         else {
-            res.send({"val": false})
-            console.log("Wrong password given")
+            res.send({"val": "nonexistent"})
         }
     }
     else{
