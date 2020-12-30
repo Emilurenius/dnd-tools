@@ -104,4 +104,4 @@ dist
 .tern-port
 
 # All contents of campaigns folder:
-campaigns/*
+mapServer/campaigns/*
