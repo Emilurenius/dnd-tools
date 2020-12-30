@@ -12,9 +12,12 @@
 
     <div class="Content">
         <p class="Main-Text">Upload map:</p>
-        <form class="standardForm Content-box" id="newMap">
-            <input type="text" placeholder="Map name" name="mapName">
-            <input type="file" name="image">
+        <form class="standardForm Content-box" id="newMap" method="POST" action="/dm/campaign/add" enctype="multipart/form-data">
+            <input type="text" name="campaign" id="campaignName" hidden>
+            <input type="text" name="add" value="image" hidden>
+            <input type="text" placeholder="Map name" name="mapName" required>
+            <input type="file" name="image" required>
+            <input type="submit" value="Upload" class="button">
         </form>
     </div>
 

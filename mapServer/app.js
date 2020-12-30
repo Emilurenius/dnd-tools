@@ -6,6 +6,7 @@ const app = express()
 const fs = require("fs")
 const bcrypt = require("bcrypt")
 const cookieParser = require("cookie-parser")
+const upload = require("express-fileupload")
 //Setup end
 
 // Reading input from terminal start
@@ -45,7 +46,8 @@ function randInt(min,max){
 app.use(cors()) // Making sure the browser can request more data after it is loaded on the client computer.
 app.set("view engine", "ejs")
 app.use(express.urlencoded({extended:false}))
-app.use(cookieParser())
+app.use(cookieParser()) // Middleware for handling cookies
+app.use(upload()) // Fileupload system
 
 app.use("/static", express.static("public"))
 
@@ -111,6 +113,7 @@ app.get("/dm/campaign/add", (req, res) => {
     }
 })
 
+
 app.post("/dm/campaign/login", async (req, res) => {
 
     if (req.body.mode == "register") {
@@ -136,7 +139,14 @@ app.post("/dm/campaign/login", async (req, res) => {
             }
             else {
                 saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignJSON)
-                res.send({"val": "success"})
+                fs.mkdir(path.join(__dirname, `/campaigns/${campaignName}/mapImages`), (err) => {
+                    if (err) {
+                        res.send({"val": "unavailable"})
+                    }
+                    else {
+                        res.send({"val": "success"})
+                    }
+                })
             }
         })
     }
@@ -169,6 +179,41 @@ app.post("/dm/campaign/login", async (req, res) => {
     else{
         console.log(`\nInvalid mode given to /dm/campaign/login: ${req.body.mode}`)
         res.send(`${req.body.mode} is not a valid mode`)
+    }
+})
+
+app.post("/dm/campaign/add", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `campaigns/${req.body.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+
+        if (req.body.add == "image") {
+            console.log("New map image recieved")
+
+            const campaign = req.body.campaign
+            const file = req.files.image
+            const filename = file.name
+            const filetype = filename.split(".")[1]
+            const newFilename = req.body.mapName
+            console.log(`Filename found: ${newFilename}.${filetype}`)
+
+            file.mv(path.join(__dirname, `/campaigns/${campaign}/mapImages/${newFilename}.${filetype}`), (err) => {
+                if (err) {
+                    res.send(err)
+                }
+                else {
+                    console.log("File saved")
+
+                    const index = Object.keys(campaignData.maps).length
+                    console.log(`Already existing maps: ${index}`)
+
+                    res.send("File uploaded")
+                }
+            })
+        }
+    }
+    else {
+        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
     }
 })
 
