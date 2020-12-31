@@ -90,7 +90,11 @@ app.get("/dm/campaign/json", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
     if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
-        res.send(campaignData)
+        const cleanedCampaignData = {
+            "maps": Object.keys(campaignData.maps),
+            "lore": campaignData.lore
+        }
+        res.send(cleanedCampaignData)
     }
     else {
         res.send({"verified": false})
@@ -110,6 +114,28 @@ app.get("/dm/campaign/add", (req, res) => {
     }
     else {
         res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
+    }
+})
+
+app.get("/dm/campaign/getimage", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        res.sendFile(campaignData.maps[req.query.imageName].link)
+    }
+    else {
+        res.send({"verified": false})
+    }
+})
+
+app.get("/dm/campaign/add/imageresize", (req, res) => { // Note to self: This is where you left off. Work from here!
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        res.sendFile(campaignData.maps[req.query.imageName].link)
+    }
+    else {
+        res.send({"verified": false})
     }
 })
 
@@ -204,8 +230,15 @@ app.post("/dm/campaign/add", (req, res) => {
                 else {
                     console.log("File saved")
 
-                    const index = Object.keys(campaignData.maps).length
-                    console.log(`Already existing maps: ${index}`)
+                    // const index = Object.keys(campaignData.maps).length
+                    // console.log(`Already existing maps: ${index}`)
+
+                    campaignData.maps[`${newFilename}.${filetype}`] = {
+                        "link": path.join(__dirname, `/campaigns/${campaign}/mapImages/${newFilename}.${filetype}`),
+                        "scale": undefined
+                    }
+
+                    saveJSON(path.join(__dirname, `campaigns/${req.body.campaign}/campaignData.json`), campaignData)
 
                     res.send("File uploaded")
                 }
