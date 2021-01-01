@@ -79,6 +79,7 @@ app.get("/dm/campaign", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
     
     if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        console.log("\nCampaign page loaded:")
         res.sendFile(path.join(__dirname, "/html/dmCampaign.html"))
     }
     else {
@@ -90,6 +91,7 @@ app.get("/dm/campaign/json", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
     if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        console.log("JSON data for campaign requested")
         const cleanedCampaignData = {
             "maps": Object.keys(campaignData.maps),
             "lore": campaignData.lore
@@ -121,6 +123,7 @@ app.get("/dm/campaign/getimage", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
     if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        console.log("\nImage is being sent to server")
         res.sendFile(campaignData.maps[req.query.imageName].link)
     }
     else {
@@ -128,11 +131,12 @@ app.get("/dm/campaign/getimage", (req, res) => {
     }
 })
 
-app.get("/dm/campaign/add/imageresize", (req, res) => { // Note to self: This is where you left off. Work from here!
+app.get("/dm/campaign/add/imageresize", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
     if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
-        res.sendFile(campaignData.maps[req.query.imageName].link)
+        console.log("\nImage resizing dialouge initiated:")
+        res.sendFile(path.join(__dirname, "/html/imageResize.html"))
     }
     else {
         res.send({"verified": false})
@@ -244,6 +248,24 @@ app.post("/dm/campaign/add", (req, res) => {
                 }
             })
         }
+    }
+    else {
+        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
+    }
+})
+
+app.post("/dm/campaign/add/imageresize", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.body.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        const scale = req.body.scale
+        const mapName = req.body.mapName
+        console.log("\nScaling data for map recieved")
+        campaignData.maps[mapName].scale = scale
+        saveJSON(path.join(__dirname, `/campaigns/${req.body.campaign}/campaignData.json`), campaignData)
+        console.log("Data saved to json file")
+
+        res.send("Data recieved")
     }
     else {
         res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")

@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
     <link rel="stylesheet" href="/static/css/main.css"/>
+    <link rel="stylesheet" href="/static/css/canvasStyle.css"/>
     <link rel="stylesheet" href="/static/css/form.css"/>
     <title>Main page</title>
 </head>
@@ -12,7 +13,15 @@
 
     <div class="Content">
         <p class="Main-Text">Resize image so it fits nicely inside square:</p>
-        <canvas style="width: 640px; height: 480px;"></canvas>
+        <form action="/dm/campaign/add/imageresize" method="POST" id="resizeForm">
+            <input type="text" name="campaign" hidden>
+            <input type="text" name="mapName" hidden>
+            <input type="range" min="-1000" max="1000" name="scale" class="slider">
+            <div>
+                <canvas class="p480" id="imageContainer"></canvas>
+            </div>
+            <input type="submit" value="Submit" class="button">
+        </form>
     </div>
 
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script> -->

@@ -7,6 +7,33 @@
     margin: 20px;
 }
 
+.slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 15px;
+    border-radius: 15px;
+    outline: none;
+    background: #ced2ed;
+    opacity: 0.7;
+    -webkit-transition: .2s;
+    transition: opacity .2s;
+}
+
+.slider:hover {
+    opacity: 1;
+}
+
+.slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 25px; /* Set a specific slider handle width */
+    height: 25px; /* Slider handle height */
+    border-radius: 50%;
+    background: #e34f00;
+    cursor: pointer; /* Cursor on hover */
+}
+
 @media (max-width: 425px) {
     .standardForm {
         display: block;
