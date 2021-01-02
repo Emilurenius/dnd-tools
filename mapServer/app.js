@@ -131,18 +131,6 @@ app.get("/dm/campaign/getimage", (req, res) => {
     }
 })
 
-app.get("/dm/campaign/add/imageresize", (req, res) => {
-    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
-
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
-        console.log("\nImage resizing dialouge initiated:")
-        res.sendFile(path.join(__dirname, "/html/imageResize.html"))
-    }
-    else {
-        res.send({"verified": false})
-    }
-})
-
 
 app.post("/dm/campaign/login", async (req, res) => {
 
