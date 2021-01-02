@@ -254,23 +254,5 @@ app.post("/dm/campaign/add", (req, res) => {
     }
 })
 
-app.post("/dm/campaign/add/imageresize", (req, res) => {
-    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.body.campaign}/campaignData.json`), sync=true)
-
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
-        const scale = req.body.scale
-        const mapName = req.body.mapName
-        console.log("\nScaling data for map recieved")
-        campaignData.maps[mapName].scale = scale
-        saveJSON(path.join(__dirname, `/campaigns/${req.body.campaign}/campaignData.json`), campaignData)
-        console.log("Data saved to json file")
-
-        res.send("Data recieved")
-    }
-    else {
-        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
-    }
-})
-
 
 app.listen(port, () => console.log(`Server started on port ${port}`))

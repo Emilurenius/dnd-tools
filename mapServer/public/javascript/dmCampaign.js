@@ -28,6 +28,7 @@ for (let index = 0; index < maps.length; index++) {
     let imageURL = `${address}/dm/campaign/getimage?campaign=${campaign}&imageName=${maps[index]}`
     console.log(imageURL)
     const img = document.createElement("img")
+    img.classList.add("map")
 
     img.src = imageURL
     mapContainer.appendChild(img)
