@@ -9,6 +9,14 @@ const cookieParser = require("cookie-parser")
 const upload = require("express-fileupload")
 //Setup end
 
+// Global variables start:
+let usedIDs = {
+    4803910850: {
+        created: Date.now() - 1000 * 60 * 60 * 24
+    }
+}
+// Global variables end
+
 // Reading input from terminal start
 const port = parseInt(process.argv[2])
 console.log(`${port} registered as server port`)
@@ -123,8 +131,65 @@ app.get("/dm/campaign/getimage", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
     if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
-        console.log("\nImage is being sent to server")
+        console.log("Image is being sent to client")
         res.sendFile(campaignData.maps[req.query.imageName].link)
+    }
+    else {
+        res.send({"verified": false})
+    }
+})
+
+app.get("/dm/campaign/generateinvite", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+        console.log(`\nNew invite link for ${req.query.campaign} is being generated`)
+        const currentTime = Date.now()
+
+        for ([key, val] of Object.entries(usedIDs)) {
+            if (usedIDs[key].created  > currentTime - 1000 * 60 * 60 * 24) {
+                continue
+            }
+            else {
+                console.log(usedIDs[key])
+                delete usedIDs[key]
+                console.log("Key deleted")
+            }
+        }
+
+        let ID = undefined
+        let pin = undefined
+        while (true) {
+
+            ID = randInt(1111111111, 9999999999)
+            pin = randInt(1111, 9999)
+
+            if (ID in usedIDs) {
+                if (usedIDs[ID].created > currentTime - 1000 * 60 * 60 * 24) {
+                    continue
+                }
+                else {
+                    delete usedIDs[ID]
+                    break
+                }
+            }
+            else {
+                break
+            }
+        }
+        response = {
+            "ID": ID,
+            "pin": pin
+        }
+        console.log(`ID and pin generated:\nID: ${ID}\npin: ${pin}`)
+
+        usedIDs[ID] = {
+            created: currentTime,
+            pin: pin,
+            campaign: req.query.campaign
+        }
+        console.log(`ID and pin assigned to ${req.query.campaign}`)
+        res.send(response)
     }
     else {
         res.send({"verified": false})
@@ -232,7 +297,7 @@ app.post("/dm/campaign/add", (req, res) => {
 
                     saveJSON(path.join(__dirname, `campaigns/${req.body.campaign}/campaignData.json`), campaignData)
 
-                    res.send("File uploaded")
+                    res.redirect(`/dm/campaign?campaign=${campaign}`)
                 }
             })
         }

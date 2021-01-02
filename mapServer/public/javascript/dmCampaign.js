@@ -1,7 +1,9 @@
-import {textFormat} from "/static/javascript/codeify.js"
+// import {textFormat} from "/static/javascript/codeify.js"
 const address = window.location.origin
+const campaign = window.location.search.split("&")[0].split("=")[1]
 const newMapButton = document.getElementById("addMapButton")
 const mapContainer = document.getElementById("maps")
+const generateInviteButton = document.getElementById("generateInviteButton")
 
 function getJSON(url) {
     var j = []
@@ -17,7 +19,6 @@ function getJSON(url) {
 
 console.log(window.location.search)
 
-const campaign = window.location.search.split("&")[0].split("=")[1]
 newMapButton.href = `/dm/campaign/add?add=map&campaign=${campaign}`
 
 const campaignData = getJSON(`${address}/dm/campaign/json?campaign=${campaign}`)
@@ -33,3 +34,8 @@ for (let index = 0; index < maps.length; index++) {
     img.src = imageURL
     mapContainer.appendChild(img)
 }
+
+generateInviteButton.addEventListener("click", () => {
+    const inviteData = getJSON(`${address}/dm/campaign/generateinvite?campaign=${campaign}`)
+    console.log(inviteData)
+})
