@@ -156,7 +156,6 @@ nav {
 }
 
 .Content .Content-box {
-    display: block;
     margin: 20px;
     border-radius: 25px;
     background: var(--secondary-background-color);

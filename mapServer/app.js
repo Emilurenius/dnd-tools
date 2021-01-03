@@ -10,11 +10,7 @@ const upload = require("express-fileupload")
 //Setup end
 
 // Global variables start:
-let usedIDs = {
-    4803910850: {
-        created: Date.now() - 1000 * 60 * 60 * 24
-    }
-}
+let usedIDs = {}
 // Global variables end
 
 // Reading input from terminal start
@@ -65,6 +61,8 @@ app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "/html/index.html"))
 })
 
+
+// DM get addresses:
 app.get("/dm", (req, res) => {
 
     if (req.query.mode) {
@@ -148,10 +146,7 @@ app.get("/dm/campaign/generateinvite", (req, res) => {
             const currentTime = Date.now()
 
             for ([key, val] of Object.entries(usedIDs)) {
-                if (usedIDs[key].created  > currentTime - 1000 * 60 * 60 * 24) {
-                    continue
-                }
-                else {
+                if (usedIDs[key].created < Date.now() - 1000 * 60 * 60 * 24) {
                     console.log(usedIDs[key])
                     delete usedIDs[key]
                     console.log("Outdated key deleted")
@@ -196,16 +191,13 @@ app.get("/dm/campaign/generateinvite", (req, res) => {
             console.log(`Existing ID and pin requested for ${req.query.campaign}`)
 
             for ([key, val] of Object.entries(usedIDs)) {
-                if (usedIDs[key].created  > currentTime - 1000 * 60 * 60 * 24) {
-                    continue
-                }
-                else {
+                if (usedIDs[key].created < Date.now() - 1000 * 60 * 60 * 24) {
                     console.log(usedIDs[key])
                     delete usedIDs[key]
                     console.log("Outdated key deleted")
                 }
             }
-
+            let found = false
             for ([key, val] of Object.entries(usedIDs)) {
                 if (usedIDs[key].campaign == req.query.campaign) {
                     res.send({
@@ -213,12 +205,13 @@ app.get("/dm/campaign/generateinvite", (req, res) => {
                         "pin": usedIDs[key].pin
                     })
                     console.log("Existing ID and pin sent to client")
-                    
+                    found = true
+                    break
                 }
-                else {
-                    res.send({ "ID": false })
-                    console.log("No ID or pin could be found for the client")
-                }
+            }
+            if (found == false) {
+                console.log("No valid ID or pin found")
+                res.send({ "ID": false })
             }
         }
     }
@@ -227,7 +220,7 @@ app.get("/dm/campaign/generateinvite", (req, res) => {
     }
 })
 
-
+// DM post addresses:
 app.post("/dm/campaign/login", async (req, res) => {
 
     if (req.body.mode == "register") {
@@ -336,6 +329,12 @@ app.post("/dm/campaign/add", (req, res) => {
     else {
         res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
     }
+})
+
+
+// Player get addresses:
+app.get("/player", (req, res) => {
+
 })
 
 
