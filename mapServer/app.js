@@ -334,7 +334,21 @@ app.post("/dm/campaign/add", (req, res) => {
 
 // Player get addresses:
 app.get("/player", (req, res) => {
+    if (req.query.mode) {
+        if (req.query.mode == "join") {
+            console.log("\nJoin campaign dialouge for players initiated")
+            res.sendFile(path.join(__dirname, "/html/playerJoin.html"))
+        }
+    }
+    else {
+        console.log("\nPlayer menu loaded")
+        res.sendFile(path.join(__dirname, "/html/playerMenu.html"))
+    }
+})
 
+// Player post addresses:
+app.post("/player/login", (req, res) => {
+    
 })
 
 

@@ -23,7 +23,7 @@ function updateInviteData(mode="generate") {
         const inviteData = getJSON(`${address}/dm/campaign/generateinvite?campaign=${campaign}&mode=generate`)
         console.log(inviteData)
 
-        const link = `link,${address}/player/campaign/join?ID=${inviteData.ID},`
+        const link = `${address}/player?mode=join&ID=${inviteData.ID}`
         const text = `Invite link: <link,${link},${link}>\nPin code: ${inviteData.pin}`
 
         inviteLinkContainer.appendChild(textFormat(text, "Body-Text-alignLeft"))
@@ -35,7 +35,7 @@ function updateInviteData(mode="generate") {
 
         if (inviteData.ID != false) {
             console.log(inviteData)
-            const link = `link,${address}/player?mode=join&ID=${inviteData.ID},`
+            const link = `${address}/player?mode=join&ID=${inviteData.ID}`
             const text = `Invite link: <link,${link},${link}>\nPin code: ${inviteData.pin}`
 
             inviteLinkContainer.appendChild(textFormat(text, "Body-Text-alignLeft"))
