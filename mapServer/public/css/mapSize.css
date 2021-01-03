@@ -1,6 +1,13 @@
 .map {
     width: 100%;
-  height: auto;
-  /* Magic! */
-  max-width: 50vw;
+    height: auto;
+    /* Magic! */
+    max-width: 60vw;
+    padding: 5px;
+}
+
+@media screen and (max-width: 425px) {
+    .map {
+        max-width: 80vw;
+    }
 }

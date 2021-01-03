@@ -30,9 +30,21 @@ for (let index = 0; index < maps.length; index++) {
     console.log(imageURL)
     const img = document.createElement("img")
     img.classList.add("map")
-
     img.src = imageURL
-    mapContainer.appendChild(img)
+
+    const imgDiv = document.createElement("div")
+    imgDiv.classList.add("Content-box")
+
+    imgDiv.appendChild(img)
+    imgDiv.appendChild(document.createElement("br"))
+
+    const editButton = document.createElement("input")
+    editButton.type = "button"
+    editButton.value = "Edit map"
+    editButton.classList.add("button")
+    imgDiv.appendChild(editButton)
+
+    mapContainer.appendChild(imgDiv)
 }
 
 generateInviteButton.addEventListener("click", () => {
