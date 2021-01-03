@@ -84,19 +84,19 @@ app.get("/dm", (req, res) => {
 app.get("/dm/campaign", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
     
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+    if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
         console.log("\nCampaign page loaded:")
         res.sendFile(path.join(__dirname, "/html/dmCampaign.html"))
     }
     else {
-        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
+        res.redirect("/dm?mode=loadCampaign&alert=Invalid_dmToken._Please_log_in")
     }
 })
 
 app.get("/dm/campaign/json", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+    if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
         console.log("JSON data for campaign requested")
         const cleanedCampaignData = {
             "maps": Object.keys(campaignData.maps),
@@ -112,7 +112,7 @@ app.get("/dm/campaign/json", (req, res) => {
 app.get("/dm/campaign/add", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+    if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
         if (req.query.add == "map") {
             console.log("\nAdd map page loaded:")
             const campaign = req.query.campaign
@@ -121,14 +121,14 @@ app.get("/dm/campaign/add", (req, res) => {
         }
     }
     else {
-        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
+        res.redirect("/dm?mode=loadCampaign&alert=Invalid_dmToken._Please_log_in")
     }
 })
 
 app.get("/dm/campaign/getimage", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+    if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
         console.log("Image is being sent to client")
         res.sendFile(campaignData.maps[req.query.imageName].link)
     }
@@ -140,7 +140,7 @@ app.get("/dm/campaign/getimage", (req, res) => {
 app.get("/dm/campaign/generateinvite", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+    if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
         if (req.query.mode == "generate") {
             console.log(`\nNew invite link for ${req.query.campaign} is being generated:`)
             const currentTime = Date.now()
@@ -182,7 +182,8 @@ app.get("/dm/campaign/generateinvite", (req, res) => {
             usedIDs[ID] = {
                 created: currentTime,
                 pin: pin,
-                campaign: req.query.campaign
+                campaign: req.query.campaign,
+                players: {}
             }
             console.log(`ID and pin assigned to ${req.query.campaign}`)
             res.send(response)
@@ -232,7 +233,7 @@ app.post("/dm/campaign/login", async (req, res) => {
         const campaignJSON = {
             "name": campaignName,
             "password": hashedPass,
-            "token": {
+            "dmToken": {
                 "val": null,
                 "created": null
             },
@@ -266,13 +267,13 @@ app.post("/dm/campaign/login", async (req, res) => {
             const campaignData = loadJSON(path.join(__dirname, `campaigns/${campaignName}/campaignData.json`), sync=true)
             const isEqual = await bcrypt.compare(password, campaignData.password)
             if (isEqual) {
-                const token = randInt(1111111111, 9999999999)
-                campaignData.token.val = token
-                campaignData.token.created = Date.now()
+                const dmToken = randInt(1111111111, 9999999999)
+                campaignData.dmToken.val = dmToken
+                campaignData.dmToken.created = Date.now()
                 saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignData)
 
-                res.send({"val": `${token}`})
-                console.log("Token transferred")
+                res.send({"val": `${dmToken}`})
+                console.log("dmToken transferred")
             }
             else {
                 res.send({"val": false})
@@ -292,7 +293,7 @@ app.post("/dm/campaign/login", async (req, res) => {
 app.post("/dm/campaign/add", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `campaigns/${req.body.campaign}/campaignData.json`), sync=true)
 
-    if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
+    if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
 
         if (req.body.add == "image") {
             console.log("New map image recieved")
@@ -327,7 +328,7 @@ app.post("/dm/campaign/add", (req, res) => {
         }
     }
     else {
-        res.redirect("/dm?mode=loadCampaign&alert=Invalid_token._Please_log_in")
+        res.redirect("/dm?mode=loadCampaign&alert=Invalid_dmToken._Please_log_in")
     }
 })
 
@@ -348,7 +349,37 @@ app.get("/player", (req, res) => {
 
 // Player post addresses:
 app.post("/player/login", (req, res) => {
+    for ([key, val] of Object.entries(usedIDs)) {
+        if (usedIDs[key].created < Date.now() - 1000 * 60 * 60 * 24) {
+            console.log(usedIDs[key])
+            delete usedIDs[key]
+            console.log("Outdated key deleted")
+        }
+    }
     
+    const ID = req.body.ID
+    const pin = req.body.pin
+    const username = req.body.username
+
+    if (ID in usedIDs) {
+        if (pin == usedIDs[ID].pin) {
+            const campaign = usedIDs[ID].campaign
+            console.log(`\nGenerating playerToken for ${username} to access ${campaign}`)
+            const playerToken = randInt(1111111111, 9999999999)
+
+            usedIDs[ID].players[username] = {
+                playerToken: playerToken
+            }
+            console.log(`playerToken saved to ${username}: ${playerToken}`)
+            res.send({ "playerToken": playerToken })
+        }
+        else {
+            res.send({ "playerToken": false })
+        }
+    }
+    else {
+        res.send({ "playerToken": false })
+    }
 })
 
 

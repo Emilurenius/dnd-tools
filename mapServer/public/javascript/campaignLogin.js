@@ -33,7 +33,7 @@ form.addEventListener("submit", (event) => {
             }
             else {
                 console.log(token)
-                setCookie("token", `${token}`, 1)
+                setCookie("dmToken", `${token}`, 1)
                 console.log("Cookie saved!")
                 console.log(token)
                 window.location.replace(`${address}/dm/campaign?campaign=${campaignName}`)
