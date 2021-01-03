@@ -151,6 +151,11 @@ app.get("/dm/campaign/generateinvite", (req, res) => {
                     delete usedIDs[key]
                     console.log("Outdated key deleted")
                 }
+                else if (usedIDs[key].campaign == req.query.campaign) {
+                    console.log(usedIDs[key])
+                    delete usedIDs[key]
+                    console.log(`Old invite link for ${req.query.campaign} deleted`)
+                }
             }
 
             let ID = undefined
