@@ -143,53 +143,84 @@ app.get("/dm/campaign/generateinvite", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
     if (campaignData.token.val == req.cookies.token && campaignData.token.created > Date.now() - 1000 * 60 * 60 * 24) {
-        console.log(`\nNew invite link for ${req.query.campaign} is being generated`)
-        const currentTime = Date.now()
+        if (req.query.mode == "generate") {
+            console.log(`\nNew invite link for ${req.query.campaign} is being generated:`)
+            const currentTime = Date.now()
 
-        for ([key, val] of Object.entries(usedIDs)) {
-            if (usedIDs[key].created  > currentTime - 1000 * 60 * 60 * 24) {
-                continue
-            }
-            else {
-                console.log(usedIDs[key])
-                delete usedIDs[key]
-                console.log("Key deleted")
-            }
-        }
-
-        let ID = undefined
-        let pin = undefined
-        while (true) {
-
-            ID = randInt(1111111111, 9999999999)
-            pin = randInt(1111, 9999)
-
-            if (ID in usedIDs) {
-                if (usedIDs[ID].created > currentTime - 1000 * 60 * 60 * 24) {
+            for ([key, val] of Object.entries(usedIDs)) {
+                if (usedIDs[key].created  > currentTime - 1000 * 60 * 60 * 24) {
                     continue
                 }
                 else {
-                    delete usedIDs[ID]
+                    console.log(usedIDs[key])
+                    delete usedIDs[key]
+                    console.log("Outdated key deleted")
+                }
+            }
+
+            let ID = undefined
+            let pin = undefined
+            while (true) {
+
+                ID = randInt(1111111111, 9999999999)
+                pin = randInt(1111, 9999)
+
+                if (ID in usedIDs) {
+                    if (usedIDs[ID].created > currentTime - 1000 * 60 * 60 * 24) {
+                        continue
+                    }
+                    else {
+                        delete usedIDs[ID]
+                        break
+                    }
+                }
+                else {
                     break
                 }
             }
-            else {
-                break
+            response = {
+                "ID": ID,
+                "pin": pin
+            }
+            console.log(`ID and pin generated:\nID: ${ID}\npin: ${pin}`)
+
+            usedIDs[ID] = {
+                created: currentTime,
+                pin: pin,
+                campaign: req.query.campaign
+            }
+            console.log(`ID and pin assigned to ${req.query.campaign}`)
+            res.send(response)
+        }
+        else if (req.query.mode == "check") {
+            console.log(`Existing ID and pin requested for ${req.query.campaign}`)
+
+            for ([key, val] of Object.entries(usedIDs)) {
+                if (usedIDs[key].created  > currentTime - 1000 * 60 * 60 * 24) {
+                    continue
+                }
+                else {
+                    console.log(usedIDs[key])
+                    delete usedIDs[key]
+                    console.log("Outdated key deleted")
+                }
+            }
+
+            for ([key, val] of Object.entries(usedIDs)) {
+                if (usedIDs[key].campaign == req.query.campaign) {
+                    res.send({
+                        "ID": key,
+                        "pin": usedIDs[key].pin
+                    })
+                    console.log("Existing ID and pin sent to client")
+                    
+                }
+                else {
+                    res.send({ "ID": false })
+                    console.log("No ID or pin could be found for the client")
+                }
             }
         }
-        response = {
-            "ID": ID,
-            "pin": pin
-        }
-        console.log(`ID and pin generated:\nID: ${ID}\npin: ${pin}`)
-
-        usedIDs[ID] = {
-            created: currentTime,
-            pin: pin,
-            campaign: req.query.campaign
-        }
-        console.log(`ID and pin assigned to ${req.query.campaign}`)
-        res.send(response)
     }
     else {
         res.send({"verified": false})

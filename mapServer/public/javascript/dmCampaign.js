@@ -1,9 +1,10 @@
-// import {textFormat} from "/static/javascript/codeify.js"
+import {textFormat} from "/static/javascript/codeify.js"
 const address = window.location.origin
 const campaign = window.location.search.split("&")[0].split("=")[1]
 const newMapButton = document.getElementById("addMapButton")
 const mapContainer = document.getElementById("maps")
 const generateInviteButton = document.getElementById("generateInviteButton")
+const inviteLinkContainer = document.getElementById("inviteLinkContainer")
 
 function getJSON(url) {
     var j = []
@@ -17,7 +18,33 @@ function getJSON(url) {
     return j
 }
 
-console.log(window.location.search)
+function updateInviteData(mode="generate") {
+    if (mode == "generate") {
+        const inviteData = getJSON(`${address}/dm/campaign/generateinvite?campaign=${campaign}&mode=generate`)
+        console.log(inviteData)
+
+        const link = `link,${address}/player/campaign/join?ID=${inviteData.ID},`
+        const text = `Invite link: <link,${link},${link}>\nPin code: ${inviteData.pin}`
+
+        inviteLinkContainer.appendChild(textFormat(text, "Body-Text-alignLeft"))
+        inviteLinkContainer.classList.remove("hidden")
+        inviteLinkContainer.classList.add("Content")
+    }
+    else if (mode == "check") {
+        const inviteData = getJSON(`${address}/dm/campaign/generateinvite?campaign=${campaign}&mode=check`)
+
+        if (inviteData.ID != false) {
+            console.log(inviteData)
+            const link = `link,${address}/player/campaign/join?ID=${inviteData.ID},`
+            const text = `Invite link: <link,${link},${link}>\nPin code: ${inviteData.pin}`
+
+            inviteLinkContainer.appendChild(textFormat(text, "Body-Text-alignLeft"))
+            inviteLinkContainer.classList.remove("hidden")
+            inviteLinkContainer.classList.add("Content")
+        }
+    }
+}
+updateInviteData("check")
 
 newMapButton.href = `/dm/campaign/add?add=map&campaign=${campaign}`
 
@@ -27,7 +54,6 @@ const maps = campaignData.maps
 
 for (let index = 0; index < maps.length; index++) {
     let imageURL = `${address}/dm/campaign/getimage?campaign=${campaign}&imageName=${maps[index]}`
-    console.log(imageURL)
     const img = document.createElement("img")
     img.classList.add("map")
     img.src = imageURL
@@ -47,7 +73,8 @@ for (let index = 0; index < maps.length; index++) {
     mapContainer.appendChild(imgDiv)
 }
 
+
+
 generateInviteButton.addEventListener("click", () => {
-    const inviteData = getJSON(`${address}/dm/campaign/generateinvite?campaign=${campaign}`)
-    console.log(inviteData)
+    updateInviteData()
 })

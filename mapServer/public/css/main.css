@@ -156,6 +156,7 @@ nav {
 }
 
 .Content .Content-box {
+    display: block;
     margin: 20px;
     border-radius: 25px;
     background: var(--secondary-background-color);
@@ -169,6 +170,14 @@ nav {
 .Content .Body-Text {
     font-size: 25px;
     padding: 5px;
+}
+
+.Content .Body-Text-alignLeft {
+    font-size: 25px;
+    padding: 5px;
+    padding-left: 50px;
+    padding-right: 50px;
+    text-align: left;
 }
 
 .Content .button {
@@ -222,6 +231,10 @@ nav {
         font-size: 15px;
     }
 
+    .Content.Body-Text-alignLeft {
+        font-size: 15px;
+    }
+
     .Content .image {
         margin: 10px;
         width: 50%;
@@ -243,6 +256,10 @@ nav {
         font-size: 10px;
     }
 
+    .Content.Body-Text-alignLeft {
+        font-size: 10px;
+    }
+
     .Content .image {
         margin: 5px;
         width: 25%;
@@ -258,4 +275,8 @@ nav {
     .Content .Content-box {
         margin: 10px;
     }
+}
+
+.hidden {
+    display: none;
 }
