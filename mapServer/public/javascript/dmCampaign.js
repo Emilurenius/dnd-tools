@@ -20,6 +20,7 @@ function getJSON(url) {
 
 function updateInviteData(mode="generate") {
     if (mode == "generate") {
+        inviteLinkContainer.innerHTML = ""
         const inviteData = getJSON(`${address}/dm/campaign/generateinvite?campaign=${campaign}&mode=generate`)
         console.log(inviteData)
 
@@ -34,6 +35,7 @@ function updateInviteData(mode="generate") {
         const inviteData = getJSON(`${address}/dm/campaign/generateinvite?campaign=${campaign}&mode=check`)
 
         if (inviteData.ID != false) {
+            inviteLinkContainer.innerHTML = ""
             console.log(inviteData)
             const link = `${address}/player?mode=join&ID=${inviteData.ID}`
             const text = `Invite link: <link,${link},${link}>\nPin code: ${inviteData.pin}`
