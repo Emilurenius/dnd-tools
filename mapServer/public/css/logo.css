@@ -1,0 +1,22 @@
+.bigLogo {
+    width: 30%; 
+    height: 30%; 
+    display: block; 
+    margin-left: auto; 
+    margin-right: auto; 
+    margin-top: 20px;
+}
+
+.smallLogo {
+    width: 5%; 
+    height: 5%; 
+    display: block; 
+    float: right; 
+    margin-right: 1em;
+}
+
+@media screen and (max-width:  767px) {
+    .smallLogo {
+        display: none;
+    }
+}
