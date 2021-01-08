@@ -47,3 +47,10 @@ form.addEventListener("submit", (event) => {
         }
     })
 })
+
+const queries = window.location.search.split("&")
+if (queries.length > 2) {
+    console.log("yes")
+    const ALERT = queries[2].split("=")[1]
+    alert(ALERT)
+}
