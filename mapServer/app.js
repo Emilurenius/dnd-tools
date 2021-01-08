@@ -272,16 +272,24 @@ app.post("/dm/campaign/login", async (req, res) => {
             const campaignData = loadJSON(path.join(__dirname, `campaigns/${campaignName}/campaignData.json`), sync=true)
             const isEqual = await bcrypt.compare(password, campaignData.password)
             if (isEqual) {
-                const dmToken = randInt(1111111111, 9999999999)
-                campaignData.dmToken.val = dmToken
-                campaignData.dmToken.created = Date.now()
-                saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignData)
 
-                res.send({"val": `${dmToken}`})
-                console.log("dmToken transferred")
+                if (campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
+                    console.log("Valid token found!")
+                    res.send({ "val": campaignData.dmToken.val })
+                    console.log("Existing token transferred")
+                }
+                else {
+                    const dmToken = randInt(1111111111, 9999999999)
+                    campaignData.dmToken.val = dmToken
+                    campaignData.dmToken.created = Date.now()
+                    saveJSON(path.join(__dirname, `/campaigns/${campaignName}/campaignData.json`), campaignData)
+
+                    res.send({ "val": `${dmToken}` })
+                    console.log("dmToken transferred")
+                }
             }
             else {
-                res.send({"val": false})
+                res.send({ "val": false })
                 console.log("Wrong password given")
             }
         }
