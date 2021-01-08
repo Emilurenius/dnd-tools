@@ -394,5 +394,10 @@ app.get("/favicon", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/images/favicon.ico"))
 })
 
+app.get("*", (req, res) => {
+    console.log("Unknown page requested!\nRedirecting to main page")
+    res.redirect("/")
+})
+
 
 app.listen(port, () => console.log(`Server started on port ${port}`))
