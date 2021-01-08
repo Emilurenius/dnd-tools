@@ -35,7 +35,11 @@ form.addEventListener("submit", (event) => {
             }
             else {
                 setCookie("playerToken", playerToken, 1)
-                console.log(`Cookie set: ${playerToken}`)
+                setCookie("userName", formData.username, 1)
+                setCookie("playerCampaignID", formData.ID, 1)
+                console.log(`Cookies set:\nplayerToken: ${playerToken}userName: \n${formData.username}\nplayerCampaignID: ${formData.ID}`)
+
+                window.location.replace(`${address}/player/campaign`)
             }
         }
         else {

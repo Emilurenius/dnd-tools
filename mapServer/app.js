@@ -360,6 +360,17 @@ app.get("/player", (req, res) => {
     }
 })
 
+app.get("/player/campaign", (req, res) => {
+    console.log("\nPlayer campaign page loaded:")
+    const playerTokenData = usedIDs[parseInt(req.cookies.playerCampaignID)].players[req.cookies.userName]
+    if (playerTokenData.playerToken == req.cookies.playerToken && playerTokenData.created > Date.now() - 1000 * 60 * 60 * 24) {
+        res.send("Logged in!")
+    }
+    else {
+        res.redirect("/player?join&alert=Invalid_token._Please_log_in")
+    }
+})
+
 // Player post addresses:
 app.post("/player/login", (req, res) => {
     for ([key, val] of Object.entries(usedIDs)) {
@@ -381,7 +392,8 @@ app.post("/player/login", (req, res) => {
             const playerToken = randInt(1111111111, 9999999999)
 
             usedIDs[ID].players[username] = {
-                playerToken: playerToken
+                playerToken: playerToken,
+                created: Date.now()
             }
             console.log(`playerToken saved to ${username}: ${playerToken}`)
             res.send({ "playerToken": playerToken })
