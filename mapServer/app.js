@@ -394,7 +394,7 @@ app.get("/favicon", (req, res) => {
     res.sendFile(path.join(__dirname, "/public/images/favicon.ico"))
 })
 
-app.get("*", (req, res) => {
+app.get("*", (req, res) => { // This one has to be the last defined address
     console.log("Unknown page requested!\nRedirecting to main page")
     res.redirect("/")
 })
