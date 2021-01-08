@@ -388,4 +388,11 @@ app.post("/player/login", (req, res) => {
 })
 
 
+// Other:
+app.get("/favicon", (req, res) => {
+    console.log("Favicon requested")
+    res.sendFile(path.join(__dirname, "/public/images/favicon.ico"))
+})
+
+
 app.listen(port, () => console.log(`Server started on port ${port}`))
