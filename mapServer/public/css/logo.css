@@ -11,8 +11,8 @@
     width: 5%; 
     height: 5%; 
     display: block; 
-    float: right; 
-    margin-right: 1em;
+    float: left; 
+    margin-right: 2em;
 }
 
 @media screen and (max-width:  767px) {
