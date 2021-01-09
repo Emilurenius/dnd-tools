@@ -105,7 +105,7 @@ app.get("/dm/campaign/json", (req, res) => {
         res.send(cleanedCampaignData)
     }
     else {
-        res.send({"verified": false})
+        res.send({ "verified": false })
     }
 })
 
@@ -364,12 +364,48 @@ app.get("/player/campaign", (req, res) => {
     console.log("\nPlayer campaign page loaded:")
     const playerTokenData = usedIDs[parseInt(req.cookies.playerCampaignID)].players[req.cookies.userName]
     if (playerTokenData.playerToken == req.cookies.playerToken && playerTokenData.created > Date.now() - 1000 * 60 * 60 * 24) {
-        res.send("Logged in!")
+        res.sendFile(path.join(__dirname, "/html/playerCampaign.html"))
     }
     else {
         res.redirect("/player?join&alert=Invalid_token._Please_log_in")
     }
 })
+
+app.get("/player/campaign/json", (req, res) => {
+    console.log("Player campaign data requested")
+    const playerTokenData = usedIDs[parseInt(req.cookies.playerCampaignID)].players[req.cookies.userName]
+    const campaign = usedIDs[parseInt(req.cookies.playerCampaignID)].campaign
+    if (playerTokenData.playerToken == req.cookies.playerToken && playerTokenData.created > Date.now() - 1000 * 60 * 60 * 24) {
+        const campaignData = loadJSON(path.join(__dirname, `/campaigns/${campaign}/campaignData.json`), sync=true)
+
+        const cleanedCampaignData = {
+            "maps": Object.keys(campaignData.maps),
+            "lore": campaignData.lore
+        }
+
+        res.send(cleanedCampaignData)
+    }
+    else {
+        res.send({ "verified": false })
+    }
+})
+
+app.get("/player/campaign/getimage", (req, res) => {
+    console.log("map requested by player")
+    const playerTokenData = usedIDs[parseInt(req.cookies.playerCampaignID)].players[req.cookies.userName]
+    const campaign = usedIDs[parseInt(req.cookies.playerCampaignID)].campaign
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${campaign}/campaignData.json`), sync=true)
+    console.log(campaignData.maps[req.query.imageName])
+
+    if (playerTokenData.playerToken == req.cookies.playerToken && playerTokenData.created > Date.now() - 1000 * 60 * 60 * 24) {
+        console.log("Image is being sent to client")
+        res.sendFile(campaignData.maps[req.query.imageName].link)
+    }
+    else {
+        res.send({"verified": false})
+    }
+})
+
 
 // Player post addresses:
 app.post("/player/login", (req, res) => {
