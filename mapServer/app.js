@@ -315,29 +315,35 @@ app.post("/dm/campaign/add", (req, res) => {
             const file = req.files.image
             const filename = file.name
             const filetype = filename.split(".")[1]
+            console.log(`Filetype found: ${filetype}`)
             const newFilename = req.body.mapName
             console.log(`Filename found: ${newFilename}.${filetype}`)
 
-            file.mv(path.join(__dirname, `/campaigns/${campaign}/mapImages/${newFilename}.${filetype}`), (err) => {
-                if (err) {
-                    res.send(err)
-                }
-                else {
-                    console.log("File saved")
-
-                    // const index = Object.keys(campaignData.maps).length
-                    // console.log(`Already existing maps: ${index}`)
-
-                    campaignData.maps[`${newFilename}.${filetype}`] = {
-                        "link": path.join(__dirname, `/campaigns/${campaign}/mapImages/${newFilename}.${filetype}`),
-                        "scale": undefined
+            const legalFileTypes = ["jpg", "png"]
+            if (legalFileTypes.includes(filetype)) {
+                console.log("Filetype legal")
+                file.mv(path.join(__dirname, `/campaigns/${campaign}/mapImages/${newFilename}.${filetype}`), (err) => {
+                    if (err) {
+                        res.send(err)
                     }
+                    else {
+                        console.log("File saved")
 
-                    saveJSON(path.join(__dirname, `campaigns/${req.body.campaign}/campaignData.json`), campaignData)
+                        campaignData.maps[`${newFilename}.${filetype}`] = {
+                            "link": path.join(__dirname, `/campaigns/${campaign}/mapImages/${newFilename}.${filetype}`),
+                            "scale": undefined
+                        }
 
-                    res.redirect(`/dm/campaign?campaign=${campaign}`)
-                }
-            })
+                        saveJSON(path.join(__dirname, `campaigns/${req.body.campaign}/campaignData.json`), campaignData)
+
+                        res.redirect(`/dm/campaign?campaign=${campaign}`)
+                    }
+                })
+            }
+            else {
+                console.log("Invalid filetype!")
+                res.send("Invalid filetype!")
+            }
         }
     }
     else {
