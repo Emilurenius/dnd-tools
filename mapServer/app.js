@@ -137,6 +137,15 @@ app.get("/dm/campaign/getimage", (req, res) => {
     }
 })
 
+app.get("/dm/campaign/editmap", (req, res) => {
+    const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
+
+    if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
+        console.log("Map editing page loaded")
+        res.sendFile(path.join(__dirname, "/html/editMap.html"))
+    }
+})
+
 app.get("/dm/campaign/generateinvite", (req, res) => {
     const campaignData = loadJSON(path.join(__dirname, `/campaigns/${req.query.campaign}/campaignData.json`), sync=true)
 
