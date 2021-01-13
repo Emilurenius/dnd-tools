@@ -2,6 +2,7 @@ const address = window.location.origin
 const mapContainer = document.getElementById("maps")
 const campaign = window.location.search.split("&")[0].split("=")[1]
 const map = window.location.search.split("&")[1].split("=")[1]
+const canvas = document.getElementById("mapEditorCanvas")
 
 function getJSON(url) {
     var j = []
@@ -19,34 +20,57 @@ const campaignData = getJSON(`${address}/dm/campaign/json?campaign=${campaign}`)
 console.log(campaignData)
 const maps = campaignData.maps
 
-const imgDiv = document.createElement("div")
-imgDiv.classList.add("Content-box")
+const img = new Image()
+img.src = `${address}/dm/campaign/getimage?campaign=${campaign}&imageName=${map}`
 
-let imageURL = `${address}/dm/campaign/getimage?campaign=${campaign}&imageName=${map}`
-const img = document.createElement("img")
-img.classList.add("map")
-img.src = imageURL
-imgDiv.appendChild(img)
-mapContainer.appendChild(imgDiv)
-console.log(img)
+function renderCanvas() {
+    const ctx = canvas.getContext("2d")
 
-// for (let index = 0; index < maps.length; index++) {
-//     let imageURL = `${address}/dm/campaign/getimage?campaign=${campaign}&imageName=${maps[index]}`
-//     const img = document.createElement("img")
-//     img.classList.add("map")
-//     img.src = imageURL
+    // Resize canvas:
+    canvas.height = window.innerHeight
+    canvas.width = window.innerWidth
 
-//     const imgDiv = document.createElement("div")
-//     imgDiv.classList.add("Content-box")
+    const newImageWidth = canvas.width * 0.8
+    const widthDiff = newImageWidth - img.width
+    console.log(widthDiff)
 
-//     imgDiv.appendChild(img)
-//     imgDiv.appendChild(document.createElement("br"))
+    // Render image:
+    console.log(img.width)
+    console.log(img.height)
+    console.log(canvas.width * 0.8)
+    ctx.drawImage(img, canvas.width * 0.1, 20, canvas.width * 0.8, img.height + widthDiff)
 
-//     const editButton = document.createElement("input")
-//     editButton.type = "button"
-//     editButton.value = "Edit map"
-//     editButton.classList.add("button")
-//     imgDiv.appendChild(editButton)
+    let painting = false
 
-//     mapContainer.appendChild(imgDiv)
-// }
+    function startPosition(e) {
+        painting = true
+        draw(e)
+    }
+    function finishedPosition() {
+        painting = false
+        ctx.beginPath()
+    }
+    function draw(e) {
+        if (!painting) return
+        ctx.lineWidth = 10
+        ctx.lineCap = "round"
+
+        ctx.lineTo(e.clientX, e.clientY)
+        ctx.stroke()
+        ctx.beginPath()
+        ctx.moveTo(e.clientX, e.clientY)
+    }
+
+    canvas.addEventListener("mousedown", startPosition)
+    canvas.addEventListener("mouseup", finishedPosition)
+    canvas.addEventListener("mousemove", draw)
+}
+
+window.addEventListener("load", renderCanvas)
+
+window.addEventListener("resize", () => {
+    canvas.height = window.innerHeight
+    canvas.width = window.innerWidth
+
+    renderCanvas()
+})

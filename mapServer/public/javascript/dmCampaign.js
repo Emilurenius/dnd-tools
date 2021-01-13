@@ -66,9 +66,9 @@ for (let index = 0; index < maps.length; index++) {
     imgDiv.appendChild(img)
     imgDiv.appendChild(document.createElement("br"))
 
-    const editButton = document.createElement("input")
-    editButton.type = "button"
-    editButton.value = "Edit map"
+    const editButton = document.createElement("a")
+    editButton.innerHTML = "Edit map"
+    editButton.href = `${address}/dm/campaign/editmap?campaign=${campaign}&map=${maps[index]}`
     editButton.classList.add("button")
     imgDiv.appendChild(editButton)
 
