@@ -30,21 +30,27 @@ function renderCanvas() {
     canvas.height = window.innerHeight
     canvas.width = window.innerWidth
 
-    const newImageWidth = canvas.width * 0.8
+    const newImageWidth = canvas.width * 0.4
     const widthDiff = newImageWidth - img.width
     console.log(widthDiff)
 
     // Render image:
     console.log(img.width)
     console.log(img.height)
-    console.log(canvas.width * 0.8)
-    ctx.drawImage(img, canvas.width * 0.1, 20, canvas.width * 0.8, img.height + widthDiff)
+    console.log(newImageWidth)
+
+    if (canvas.width > 425) {
+        console.log(canvas.width)
+        ctx.drawImage(img, canvas.width * 0.28, 20, newImageWidth, img.height + widthDiff)
+    }
+    else {
+        ctx.drawImage(img, canvas.width * 0.18, 200, newImageWidth + 90, img.height + widthDiff + 90)
+    }
 
     let painting = false
 
     function startPosition(e) {
         painting = true
-        draw(e)
     }
     function finishedPosition() {
         painting = false
@@ -54,11 +60,6 @@ function renderCanvas() {
         if (!painting) return
         ctx.lineWidth = 10
         ctx.lineCap = "round"
-
-        ctx.lineTo(e.clientX, e.clientY)
-        ctx.stroke()
-        ctx.beginPath()
-        ctx.moveTo(e.clientX, e.clientY)
     }
 
     canvas.addEventListener("mousedown", startPosition)
@@ -69,7 +70,7 @@ function renderCanvas() {
 window.addEventListener("load", renderCanvas)
 
 window.addEventListener("resize", () => {
-    canvas.height = window.innerHeight
+    canvas.height = window.innerHeight - 30 - 84 - 20
     canvas.width = window.innerWidth
 
     renderCanvas()
