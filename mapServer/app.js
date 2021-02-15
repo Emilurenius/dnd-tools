@@ -361,6 +361,12 @@ app.post("/dm/campaign/add", (req, res) => {
 })
 
 
+// Test address:
+app.get("/test", (req, res) => {
+    res.sendFile(path.join(__dirname, "/html/test.html"))
+})
+
+
 // Player get addresses:
 app.get("/player", (req, res) => {
     if (req.query.mode) {
