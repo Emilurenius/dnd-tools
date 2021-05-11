@@ -1,4 +1,3 @@
-import {textFormat} from "/static/javascript/codeify.js"
 const address = window.location.origin
 const mapContainer = document.getElementById("maps")
 

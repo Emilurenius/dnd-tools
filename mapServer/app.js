@@ -7,6 +7,8 @@ const fs = require("fs")
 const bcrypt = require("bcrypt")
 const cookieParser = require("cookie-parser")
 const upload = require("express-fileupload")
+const server = require("http").createServer(app)
+const io = require("socket.io")(server, { cors: { origin: "*" }})
 //Setup end
 
 // Global variables start:
@@ -427,6 +429,10 @@ app.get("/player/campaign/getimage", (req, res) => {
     }
 })
 
+app.get("/player/campaign/chat", (req, res) => {
+    res.sendFile(path.join(__dirname, "/html/iframes/chat.html"))
+})
+
 
 // Player post addresses:
 app.post("/player/login", (req, res) => {
@@ -477,4 +483,4 @@ app.get("*", (req, res) => { // This one has to be the last defined address
 })
 
 
-app.listen(port, () => console.log(`Server started on port ${port}`))
+server.listen(port, () => console.log(`Server started on port ${port}`))

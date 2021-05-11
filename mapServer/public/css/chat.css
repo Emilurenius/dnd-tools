@@ -1,0 +1,44 @@
+:root {
+    --main-background-color: #552900;
+    --secondary-background-color: #e96a44;
+    --button-color: #ff0000;
+}
+
+*{
+    margin: 0px;
+    padding: 0px;
+    box-sizing: border-box;
+}
+
+body {
+    background-color: #270000;
+}
+
+.inputBox {
+    background: var(--secondary-background-color);
+    padding: 10px;
+    border-radius: 10px;
+    width: 90%;
+    font-size: 30px;
+}
+
+.inputBox .inputField {
+    padding: 0.5vw;
+    width: 90%;
+}
+
+.inputBox .sendButton {
+    padding: 0.5vw;
+    width: 5%;
+}
+
+.chatBox {
+    padding: 10px;
+    border-radius: 10px;
+    width: 90vw;
+    margin: auto;
+    margin-top: 10px;
+    font-size: 30px;
+    color: white;
+    margin-bottom: 20px;
+}

@@ -1,4 +1,3 @@
-import {textFormat} from "/static/javascript/codeify.js"
 const address = window.location.origin
 const campaign = window.location.search.split("&")[0].split("=")[1]
 const newMapButton = document.getElementById("addMapButton")

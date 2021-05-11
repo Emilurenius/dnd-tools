@@ -9,15 +9,29 @@
     <link rel="stylesheet" href="/static/css/main.css"/>
     <link rel="stylesheet" href="/static/css/mapSize.css"/>
     <link rel="stylesheet" href="/static/css/logo.css"/>
-    <title>DM page</title>
+    <link rel="stylesheet" href="/static/css/chat.css"/>
+    <title>Player campaign page</title>
 </head>
 <body>
 
     <img src="/static/images/dndToolsLogo.png" class="smallLogo">
 
+    <div class="Content" style="overflow-y: scroll; overflow-x: hidden; height: 500px; text-align: left;" id="chatBoxContainer">
+        <div class="chatBox">
+            <p class="Body-Text">This is the chat box</p><br><br><br><br><br><br><br><br><br><br><br><br><br>
+        </div>
+        <div class="inputBox">
+            <input type="text" placeholder="write '/help' for commands" class="inputField">
+            <input type="button" value="send" class="sendButton">
+        </div>
+    </div>
+
     <div class="Content" id="maps"></div>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <script type="module" src="/static/javascript/playerCampaign.js"></script>
+    <script src="/static/javascript/codeify.js"></script>
+    <script src="/static/javascript/playerCampaign.js"></script>
+    <script src="/static/javascript/codeify.js"></script>
+    <script src="/static/javascript/chat.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-export function textFormat(rawText, textClass) {
+function textFormat(rawText, textClass) {
     const textBox = document.createElement("div")
     const bodyTextList = rawText.split("\n")
     let body = document.createElement("p")
@@ -37,7 +37,7 @@ export function textFormat(rawText, textClass) {
     return textBox
 }
 
-export function translate(json) {
+function translate(json) {
     for (let key of Object.keys(json)) {
         if (key == "header") {
             console.log(`Translating to: ${json[key].language}`)
