@@ -315,14 +315,15 @@ app.post("/dm/campaign/login", async (req, res) => {
 })
 
 app.post("/dm/campaign/add", (req, res) => {
-    const campaignData = loadJSON(path.join(__dirname, `campaigns/${req.body.campaign}/campaignData.json`), sync=true)
+    console.log(req.body)
+    const campaignData = loadJSON(path.join(__dirname, `campaigns/${req.body.campaign.replace("%20", " ")}/campaignData.json`), sync=true)
 
     if (campaignData.dmToken.val == req.cookies.dmToken && campaignData.dmToken.created > Date.now() - 1000 * 60 * 60 * 24) {
 
         if (req.body.add == "image") {
             console.log("New map image recieved")
 
-            const campaign = req.body.campaign
+            const campaign = req.body.campaign.replace("%20", " ")
             const file = req.files.image
             const filename = file.name
             const filetype = filename.split(".")[1]
